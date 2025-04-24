@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>SupportBot</title>
+  <style>
+    /* ——— CHATTOGGLE BUTTON ——— */
+    #chat-toggle {
+      position: fixed; bottom: 20px; right: 20px;
+      width: 60px; height: 60px;
+      background: #000; color: #fff;
+      border-radius: 50%; font-size: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 1000;
+    }
+    /* ——— POPUP CONTAINER ——— */
+    #chat-container {
+      position: fixed; bottom: 90px; right: 20px;
+      width: 340px; height: 450px;
+      background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,.15);
+      border-radius: 8px; display: flex; flex-direction: column;
+      overflow: hidden; font-family: sans-serif;
+      z-index: 1000; visibility: hidden; opacity: 0;
+      transition: opacity .3s;
+    }
+    #chat-container.open {
+      visibility: visible; opacity: 1;
+    }
+    /* ——— HEADER ——— */
+    #chat-header {
+      background: #000; color: #fff;
+      padding: 12px; font-weight: bold;
+      display: flex; justify-content: space-between;
+      align-items: center;
+    }
+    #chat-header button {
+      background: transparent; border: none;
+      color: #fff; font-size: 20px; cursor: pointer;
+    }
+    /* ——— MESSAGE AREA ——— */
+    #chat-body {
+      flex: 1; padding: 12px;
+      background: #f9f9f9; overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+    #chat-body div { margin-bottom: 10px; }
+    /* scrollbar */
+    #chat-body::-webkit-scrollbar { width: 6px; }
+    #chat-body::-webkit-scrollbar-thumb { background: #888; border-radius: 3px; }
+    /* ——— FOOTER ——— */
+    #chat-footer {
+      display: flex; border-top: 1px solid #ddd;
+    }
+    #chat-footer input {
+      flex: 1; border: none; padding: 10px;
+      font-size: 14px; outline: none;
+    }
+    #chat-footer button {
+      background: #000; color: #fff;
+      border: none; padding: 0 16px;
+      cursor: pointer;
+    }
+    /* ——— OPTION BUTTONS ——— */
+    .option-btns { margin-top: 8px; }
+    .option-btns button {
+      margin: 4px 4px 0 0; padding: 6px 10px;
+      background: #000; color: #fff; border: none;
+      border-radius: 4px; cursor: pointer;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <!-- float button -->
+  <div id="chat-toggle">💬</div>
+  <!-- chat popup -->
+  <div id="chat-container">
+    <div id="chat-header">
+      SupportBot
+      <button id="close-btn">&times;</button>
+    </div>
+    <div id="chat-body"></div>
+    <div id="chat-footer">
+      <input id="user-input" placeholder="Type a message…" autocomplete="off">
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+  <script>
+    const toggle = document.getElementById('chat-toggle');
+    const box = document.getElementById('chat-container');
+    const closeBtn = document.getElementById('close-btn');
+    const sendBtn = document.getElementById('send-btn');
+    const input = document.getElementById('user-input');
+    const body = document.getElementById('chat-body');
+    let waitOrder = false, initiated=false;
+
+    toggle.onclick = () => {
+      box.classList.toggle('open');
+      if (box.classList.contains('open') && !initiated) {
+        initiated = true;
+        bot("Welcome! How can I help you today?", ["Track order","Refund status","Product support"]);
+      }
+      input.focus();
+    };
+    closeBtn.onclick = () => box.classList.remove('open');
+    sendBtn.onclick = send;
+    input.addEventListener('keypress', e => { if (e.key==='Enter') send(); });
+
+    function send() {
+      const text = input.value.trim();
+      if(!text) return;
+      user(text);
+      input.value='';
+      respond(text.toLowerCase());
+    }
+    function user(msg) { append("You",msg); }
+    function bot(msg, opts=[]) {
+      append("Bot",msg);
+      if(opts.length) {
+        const ctr=document.createElement('div');
+        ctr.className='option-btns';
+        opts.forEach(o=>{
+          const btn=document.createElement('button');
+          btn.textContent=o;
+          btn.onclick=()=>{ user(o); respond(o.toLowerCase()); };
+          ctr.appendChild(btn);
+        });
+        body.appendChild(ctr);
+      }
+      body.scrollTop = body.scrollHeight;
+    }
+    function append(sender,msg) {
+      const d=document.createElement('div');
+      d.innerHTML=`<strong>${sender}:</strong> ${msg}`;
+      body.appendChild(d);
+      body.scrollTop = body.scrollHeight;
+    }
+    function respond(txt) {
+      if(waitOrder) {
+        bot("Thanks! Checking order #"+txt+" now.");
+        waitOrder=false; return;
+      }
+      if(txt.includes("track")||txt.includes("order")) {
+        bot("Sure—what’s your order number?");
+        waitOrder=true;
+      } else if(txt.includes("refund")) {
+        bot("Refunds take 3–5 days. Check status?",["Yes","No"]);
+      } else if(txt==="yes") {
+        bot("Please enter your order #.");
+        waitOrder=true;
+      } else if(txt==="no") {
+        bot("Okay! Let me know if you need more help.");
+      } else if(txt.includes("product")) {
+        bot("Which product do you need support with?",["Mobile","Laptop","Accessory"]);
+      } else {
+        bot("Sorry, I didn’t get that. Try “track”, “refund”, or “support.”");
+      }
+    }
+  </script>
+</body>
+</html>
