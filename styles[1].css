@@ -1,0 +1,83 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+}
+
+#chat-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: black;
+  color: white;
+  border-radius: 50%;
+  width: 60px; height: 60px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; cursor: pointer; z-index: 1000;
+}
+
+#chatbot-container {
+  position: fixed; bottom: 90px; right: 20px;
+  width: 360px; height: 500px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-radius: 10px;
+  display: flex; flex-direction: column;
+  overflow: hidden; z-index: 1000;
+}
+.hidden { display: none !important; }
+
+#chatbox-header {
+  background: black; color: white;
+  padding: 12px; font-size: 16px;
+  display: flex; justify-content: space-between;
+  align-items: center;
+}
+
+#chatbox-body {
+  position: relative;
+  flex: 1; padding: 15px;
+  background: #f9f9f9;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+#chatbox-body::-webkit-scrollbar {
+  width: 8px;
+}
+#chatbox-body::-webkit-scrollbar-thumb {
+  background: #888; border-radius: 4px;
+}
+
+#scroll-btn {
+  position: absolute; bottom: 10px; right: 10px;
+  background: black; color: white;
+  border: none; padding: 5px 8px;
+  border-radius: 4px; cursor: pointer; z-index: 10;
+}
+
+#chatbox-footer {
+  display: flex; padding: 10px;
+  background: #f1f1f1; gap: 10px;
+}
+#user-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+button {
+  background: black; border: none;
+  color: white; padding: 10px 16px;
+  border-radius: 6px; cursor: pointer;
+}
+button:hover { background: #333; }
+
+#chatlog div { margin-bottom: 10px; line-height: 1.4; }
+.option-buttons { margin-top: 10px; }
+.option-buttons button {
+  margin: 5px 5px 0 0;
+  padding: 6px 12px;
+  background: #000; color: #fff;
+  border: none; border-radius: 4px;
+  cursor: pointer;
+}
